@@ -68,7 +68,6 @@ int main(int argc, const char *argv[]){
 	EVP_MD_CTX_free(md256);
     EVP_MD_CTX_free(md512);
 
-
     printf("The digest (sha256) is: ");
     for(int i = 0; i < md256_len; i++)
 		printf("%02x", md256_value[i]);
@@ -90,9 +89,9 @@ int main(int argc, const char *argv[]){
     
     printf("the digest low is: ");
 
-    for(int i=md512_len/2 ;i < md512_len; i++){
-        md512_l[i] = md512_value[i];
-        printf("%02x", md512_l[i]);
+    for(int i=md256_len ;i < md512_len; i++){
+        md512_l[i - md256_len] = md512_value[i];
+        printf("%02x", md512_l[i - md256_len]);
     }
 
     printf("\n");
