@@ -52,7 +52,7 @@ int main (int argc, char**argv){
 
         EVP_MD_CTX_free(hmac_ctx);
 
-                printf("The HMAC is: ");
+        printf("The HMAC is: ");
         for(int i = 0; i < hmac_len; i++)
 			     printf("%02x", hmac_value[i]);
         printf("\n");
