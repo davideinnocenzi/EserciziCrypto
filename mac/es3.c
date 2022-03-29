@@ -34,6 +34,9 @@ int main (int argc, char**argv){
     }
 
     FILE* fp;
+    unsigned char key[17];
+    strcpy(key,argv[2]);
+    printf("%lu\n", strlen(key));
 
     if(((fp = fopen(argv[1],"r")) == NULL)){
         handleErrors();
@@ -43,7 +46,7 @@ int main (int argc, char**argv){
         handleErrors();
     }
 
-    if(!EVP_DigestUpdate(ctx,argv[1],strlen(argv[1]))){
+    if(!EVP_DigestUpdate(ctx,key,strlen(key))){
         handleErrors();
     }
 
@@ -51,12 +54,12 @@ int main (int argc, char**argv){
     unsigned char buff[MAXBUF];
 
     while((n = fread(buff,1,MAXBUF,fp)) > 0 ){
-        if(!EVP_DigestUpdate(ctx,buff,MAXBUF)) {
+        if(!EVP_DigestUpdate(ctx,buff,n)) {
             handleErrors();
         }
     }
 
-    if(!EVP_DigestUpdate(ctx,argv[1],strlen(argv[1]))){
+    if(!EVP_DigestUpdate(ctx,key,strlen(key))){
         handleErrors();
     }
 

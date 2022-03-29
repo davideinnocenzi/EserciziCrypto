@@ -34,11 +34,19 @@ int main(int argc, const char *argv[]){
     /* Load all digest and cipher algorithms */
     OpenSSL_add_all_algorithms();
 
-    key = (unsigned char *) malloc(strlen(argv[2])*sizeof(char));
+    key = (unsigned char *) malloc(strlen(&argv[2][0])*sizeof(char));
+    bzero(key,strlen(&argv[2][0]));
 
-    for (int i = 0; i < strlen(argv[2]); i++)
-        key[i] = argv[2][i];
-    
+    strcpy(key,argv[2]);
+
+    // for (int i = 0; i < strlen(&argv[2][0]); i++)
+    //     //key[i] = argv[2][i];
+    //     sscanf(&argv[2][i], "%c",&key[i]);
+
+    for (int i = 0;i < strlen(key); i++){
+        printf("%c",key[i]);
+    }
+    printf("\n");
 
     EVP_MD_CTX *md = EVP_MD_CTX_new();
 
@@ -50,7 +58,7 @@ int main(int argc, const char *argv[]){
     
     int n_read;
     unsigned char buffer[MAXBUF];
-    while((n_read = fread(buffer, sizeof(char), MAXBUF, fp)) > 0){
+    while((n_read = fread(buffer, 1, MAXBUF, fp)) > 0){
     // Returns 1 for success and 0 for failure.
         if(!EVP_DigestUpdate(md, buffer, n_read))
             handle_errors();
@@ -67,7 +75,7 @@ int main(int argc, const char *argv[]){
     unsigned int md_len;
 
     //int EVP_DigestFinal_ex(EVP_MD_CTX *ctx, unsigned char *md, unsigned int *s);
-    if(!EVP_DigestFinal_ex(md, md_value, &md_len))
+    if(!EVP_DigestFinal(md, md_value, &md_len))
         handle_errors();
 
     // void EVP_MD_CTX_free(EVP_MD_CTX *ctx);
