@@ -1,3 +1,5 @@
+-- Digests
+
 1. Write a program in C that, using the OpenSSL library, computes the hash of the content of a file using SHA256 (or or SHA 512 or SHA3).
 The filename is passed as first parameter from the command line.
 
