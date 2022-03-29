@@ -11,5 +11,6 @@ HINT: check the EVP_get_digestbyname function (or the EVP_MD_fetch if you are us
 
 4. Using OpenSSL, compute the digest of the file passed as first parameter from the command line with both SHA256 and SHA512.
 Then, name sha512_low and sha512_high the first 256 bits and the last 256 of the SHA512 digest, respectively, and sha256 the digest computed with SHA356, you have to compute print on the standard output the following operation:
-  
-  `sha256 XOR (sha512_low AND SHA512_high)
+  ```
+  sha256 XOR (sha512_low AND SHA512_high)
+  ```
