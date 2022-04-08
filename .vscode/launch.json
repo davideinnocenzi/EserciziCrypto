@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": ["./pippo.txt", "deadbeefdeadbeef"],
+            "args": ["deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef", "./pippo.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],

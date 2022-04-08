@@ -8,7 +8,13 @@
 #define NBYTE 32
 
 void handleErrors(){
-    ERR_print_errors_fp(stderr);
+    FILE *err = fopen("err.txt", "w");
+    if(err == NULL){
+        abort();
+    }
+    ERR_print_errors_fp(err);
+    fclose(err);
+    printf("\n");
     abort();
 }
 
@@ -30,7 +36,6 @@ int main (int argc, char**argv){
     }
 
     EVP_MD_CTX *ctx = EVP_MD_CTX_new();
-    EVP_MD_CTX_init(ctx);
 
     EVP_DigestInit(ctx,EVP_sha256());
     unsigned char opad=0x5c;
@@ -63,10 +68,11 @@ int main (int argc, char**argv){
             handleErrors();
     }
 
-    EVP_MD_CTX_free(ctx);
+    // EVP_MD_CTX_free(ctx);
 
-    EVP_MD_CTX *ctx1 = EVP_MD_CTX_new();
-    EVP_MD_CTX_init(ctx1);
+    // EVP_MD_CTX *ctx1 = EVP_MD_CTX_new();
+    // EVP_MD_CTX_init(ctx1);
+    EVP_DigestInit_ex(ctx, EVP_sha256(),NULL);
 
     unsigned char xor_ipad[NBYTE];
     unsigned char xor_opad[NBYTE];
@@ -80,42 +86,44 @@ int main (int argc, char**argv){
     size_t n_read;
     unsigned char buffer[NBYTE];
 
-     if(!EVP_DigestUpdate(ctx1, xor_ipad, strlen(xor_ipad)));
-            handleErrors();
-
     while((n_read = fread(buffer, sizeof(char), NBYTE, fp)) > 0){
     // Returns 1 for success and 0 for failure.
         
-        if(!EVP_DigestUpdate(ctx1, buffer, n_read))
+        if(!EVP_DigestUpdate(ctx, xor_ipad, strlen(xor_ipad)))
+            handleErrors();
+
+        if(!EVP_DigestUpdate(ctx, buffer, NBYTE))
             handleErrors();
     }
 
     unsigned char inner_hash[NBYTE];
     int inner_size;
-    if(!EVP_DigestFinal(ctx1,inner_hash,&inner_size))
+    if(!EVP_DigestFinal(ctx,inner_hash,&inner_size))
         handleErrors();
 
-    EVP_MD_CTX_free(ctx1);
+    // EVP_MD_CTX_free(ctx1);
 
-    EVP_MD_CTX *ctx2 = EVP_MD_CTX_new();
-    EVP_MD_CTX_init(ctx2);
+    // EVP_MD_CTX *ctx2 = EVP_MD_CTX_new();
+    // EVP_MD_CTX_init(ctx2);
 
-    if(!EVP_DigestInit(ctx2, EVP_sha256()))
+    EVP_DigestInit(ctx,EVP_sha256());
+
+    // if(!EVP_DigestInit(ctx2, EVP_sha256()))
+    //     handleErrors();
+    
+    if(!EVP_DigestUpdate(ctx,xor_opad,strlen(xor_opad)))
         handleErrors();
     
-    if(!EVP_DigestUpdate(ctx2,xor_opad,strlen(xor_opad)))
-        handleErrors();
-    
-    if(!EVP_DigestUpdate(ctx2,inner_hash,inner_size))
+    if(!EVP_DigestUpdate(ctx,inner_hash,inner_size))
         handleErrors();
     
     unsigned char hmac[NBYTE];
     int hmac_len;
 
-    if(!EVP_DigestFinal(ctx2,hmac,&hmac_len))
+    if(!EVP_DigestFinal(ctx,hmac,&hmac_len))
         handleErrors();
     
-    EVP_MD_CTX_free(ctx2);
+    EVP_MD_CTX_free(ctx);
     ERR_free_strings();
     fclose(fp);
     CRYPTO_cleanup_all_ex_data();

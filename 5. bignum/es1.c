@@ -50,16 +50,16 @@ int main (int argc, const char *argv[]){
     BIGNUM *bn3 = BN_new();
     
     printf("bn1 :\n");
-    BN_asc2bn(&bn1, rs1);
+    BN_bin2bn(rs1, MAX_BYTES, bn1);
     BN_print_fp(stdout, bn1);
 
     printf("\nbn2 :\n");
-    BN_asc2bn(&bn2, rs2);
+    BN_bin2bn(rs2, MAX_BYTES, bn2);
     BN_print_fp(stdout, bn2);
     printf("\nbn3 :\n");
 
-    BN_asc2bn(&bn3, rs3);
-    BN_print_fp(stdout, bn3);
+    BN_hex2bn(&bn3, rs3);
+    BN_bin2bn(rs3, MAX_BYTES, bn3);
     printf("\n\n");
 
     // Sum bn1 + bn2
